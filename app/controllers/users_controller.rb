@@ -25,7 +25,10 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        # AddMailToMailChampListJob.set(wait_until: Date.tomorrow.noon).perform_later(@user)
+        # SendSummaryUsersItemsJob.set(wait_until: 1.day).perform_later()
         UserMailer.with(user: @user).welcome_email.deliver_now
+        SendSummaryUsersItemsJob.set(wait_until: Time.now + 1.day).perform_later()
         format.html { redirect_to user_url(@user), notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
       else
