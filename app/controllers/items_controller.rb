@@ -10,6 +10,12 @@ class ItemsController < ApplicationController
   def show
   end
 
+  def purge_picture
+    @item = Item.find(params[:id])
+    @item.picture.purge
+    redirect_back fallback_location: items_path, notice: "success"
+  end
+
   # GET /items/new
   def new
     @item = Item.new
@@ -68,6 +74,6 @@ class ItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def item_params
-      params.require(:item).permit(:name, :price)
+      params.require(:item).permit(:name, :price, :picture, :uploads => [])
     end
 end
